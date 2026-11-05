@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>동탄온 - 화성시 소상공인 맞춤 지원 정책 AI 플랫폼</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Inter & Noto Sans KR Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans KR', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              800: '#3730a3',
+              900: '#312e81',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', 'Noto Sans KR', sans-serif; background-color: #f8fafc; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- TOP HEADER -->
+  <header class="bg-indigo-900 text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center font-bold text-xl shadow-md text-white">
+          <i class="fa-solid fa-store"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-xl font-bold tracking-tight">동탄온 (Dongtan-On)</h1>
+            <span class="bg-indigo-700/80 text-indigo-200 text-xs px-2.5 py-0.5 rounded-full font-medium border border-indigo-500/30">소상공인 AI 매칭</span>
+          </div>
+          <p class="text-xs text-indigo-200">화성시 소상공인 개업·홍보 맞춤형 원스톱 지원 플랫폼</p>
+        </div>
+      </div>
+      
+      <!-- Quick Status & Action Buttons -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <div class="hidden sm:flex bg-indigo-950/60 border border-indigo-700/50 rounded-lg px-3 py-1.5 items-center gap-2 text-xs">
+          <span class="relative flex h-2.5 w-2.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+          </span>
+          <span class="text-emerald-300 font-medium">AI 매칭 시스템 가동 중</span>
+        </div>
+        <button onclick="openChecklistModal()" class="bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white text-xs px-3.5 py-2 rounded-xl transition font-semibold flex items-center gap-1.5 shadow-md">
+          <i class="fa-solid fa-clipboard-check"></i>
+          <span>행정 서류 체크리스트</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- MAIN NAVIGATION TABS -->
+    <div class="bg-indigo-950/90 border-t border-indigo-800/60 px-4">
+      <div class="max-w-7xl mx-auto flex space-x-2 sm:space-x-4 overflow-x-auto custom-scrollbar text-sm">
+        <button onclick="switchTab('classifier')" id="tab-classifier" class="tab-btn active px-4 py-3 font-semibold border-b-2 border-indigo-400 text-white flex items-center gap-2 whitespace-nowrap">
+          <i class="fa-solid fa-wand-magic-sparkles text-indigo-300"></i> AI 지원 정책 추천
+        </button>
+        <button onclick="switchTab('calculator')" id="tab-calculator" class="tab-btn px-4 py-3 font-semibold border-b-2 border-transparent text-indigo-300 hover:text-white flex items-center gap-2 whitespace-nowrap">
+          <i class="fa-solid fa-calculator text-indigo-300"></i> 자격 요건 자가 진단기
+        </button>
+        <button onclick="switchTab('policies')" id="tab-policies" class="tab-btn px-4 py-3 font-semibold border-b-2 border-transparent text-indigo-300 hover:text-white flex items-center gap-2 whitespace-nowrap">
+          <i class="fa-solid fa-layer-group text-indigo-300"></i> 지원 정책 전체 안내
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
+
+    <!-- Toast Message Container -->
+    <div id="toast-msg" class="hidden fixed bottom-6 right-6 z-50 bg-slate-900 text-white text-xs px-4 py-3 rounded-xl shadow-xl flex items-center gap-2 border border-slate-700">
+      <i id="toast-icon" class="fa-solid fa-circle-info text-indigo-400"></i>
+      <span id="toast-text">안내 메시지입니다.</span>
+    </div>
+
+    <!-- ================= TAB 1: AI POLICY CLASSIFIER ================= -->
+    <section id="sec-classifier" class="space-y-6">
+      
+      <!-- HERO INPUT CARD -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 transition-all hover:shadow-md">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+          <label for="user-query" class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-circle-question text-indigo-600"></i>
+            필요한 지원이나 궁금한 점을 자연스럽게 물어보세요
+          </label>
+          <span class="text-xs text-indigo-600 font-semibold bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100">
+            화성시 소상공인 맞춤 AI 추천
+          </span>
+        </div>
+
+        <div class="relative">
+          <textarea id="user-query" rows="3" 
+            class="w-full rounded-xl border border-slate-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 p-3.5 text-sm sm:text-base text-slate-800 placeholder-slate-400 resize-none transition outline-none shadow-inner"
+            placeholder="예: 창업한 지 1년 되었는데 매장 인테리어나 간판 교체 비용을 지원받을 수 있는 사업이 있나요? 또는 대출 이자를 줄이고 싶습니다."></textarea>
+          
+          <div class="mt-3 flex flex-wrap items-center justify-between gap-3">
+            <button onclick="clearInput()" class="text-xs text-slate-400 hover:text-slate-600 flex items-center gap-1 transition">
+              <i class="fa-solid fa-eraser"></i> 입력 초기화
+            </button>
+
+            <button onclick="runPrediction()" class="bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-semibold text-sm px-6 py-2.5 rounded-xl shadow-md transition flex items-center gap-2">
+              <i class="fa-solid fa-bolt"></i>
+              <span>AI 맞춤 정책 찾기</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- CATEGORIZED SAMPLE QUESTION PRESETS -->
+        <div class="mt-5 pt-4 border-t border-slate-100">
+          <p class="text-xs font-semibold text-slate-500 mb-2.5 flex items-center gap-1">
+            <i class="fa-solid fa-lightbulb text-amber-500"></i> 자주 묻는 대표 질문 선택 (원클릭 자동 입력):
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+            <button onclick="setQuery('창업 1년차인데 매장 인테리어 및 간판 교체 비용 최대 300만원 지원받고 싶어요.')" 
+              class="preset-btn bg-slate-50 hover:bg-indigo-50 text-slate-700 hover:text-indigo-800 text-xs p-2.5 rounded-xl border border-slate-200 hover:border-indigo-200 transition text-left flex items-start gap-2">
+              <span class="text-base">🛠️</span>
+              <div>
+                <div class="font-bold text-slate-800">경영환경 개선</div>
+                <div class="text-[11px] text-slate-500">인테리어, 간판, 리모델링</div>
+              </div>
+            </button>
+
+            <button onclick="setQuery('담보가 부족해서 대출받기가 어렵습니다. 대출 보증과 이자 2% 지원받는 법 안내해주세요.')" 
+              class="preset-btn bg-slate-50 hover:bg-indigo-50 text-slate-700 hover:text-indigo-800 text-xs p-2.5 rounded-xl border border-slate-200 hover:border-indigo-200 transition text-left flex items-start gap-2">
+              <span class="text-base">🏦</span>
+              <div>
+                <div class="font-bold text-slate-800">소상공인 특례보증</div>
+                <div class="text-[11px] text-slate-500">담보 부족 대출 + 이자 2% 지원</div>
+              </div>
+            </button>
+
+            <button onclick="setQuery('미소금융 경기화성법인 대출을 받았는데 이자 3.5% 지원 신청 자격이 어떻게 되나요?')" 
+              class="preset-btn bg-slate-50 hover:bg-indigo-50 text-slate-700 hover:text-indigo-800 text-xs p-2.5 rounded-xl border border-slate-200 hover:border-indigo-200 transition text-left flex items-start gap-2">
+              <span class="text-base">🤝</span>
+              <div>
+                <div class="font-bold text-slate-800">미소금융 이자 지원</div>
+                <div class="text-[11px] text-slate-500">미소금융 대출자 이자 3.5% 감면</div>
+              </div>
+            </button>
+
+            <button onclick="setQuery('제조업 공방 소공인 시제품 제작 및 마케팅, 디지털 전환 지원 센터 안내해주세요.')" 
+              class="preset-btn bg-slate-50 hover:bg-indigo-50 text-slate-700 hover:text-indigo-800 text-xs p-2.5 rounded-xl border border-slate-200 hover:border-indigo-200 transition text-left flex items-start gap-2">
+              <span class="text-base">🏭</span>
+              <div>
+                <div class="font-bold text-slate-800">소공인 특화지원</div>
+                <div class="text-[11px] text-slate-500">시제품 제작, 마케팅, 스마트화</div>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PREDICTION RESULTS AREA -->
+      <div id="results-area" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- LEFT: RECOMMENDED POLICY CARD & INTEGRATED ELIGIBILITY CHECK (7 cols) -->
+        <div class="lg:col-span-7 space-y-6">
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative">
+            <div id="result-top-bar" class="h-2 bg-indigo-600"></div>
+
+            <div class="p-6">
+              <!-- Result Header -->
+              <div class="flex items-start justify-between gap-4 mb-4">
+                <div>
+                  <span class="text-xs font-semibold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100 mb-1 inline-block">
+                    AI 추천 최적 지원 사업
+                  </span>
+                  <h2 id="res-title" class="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
+                    질문을 입력해주세요
+                  </h2>
+                </div>
+                <div class="text-right flex-shrink-0">
+                  <div class="text-xs text-slate-400">AI 적합도 (매칭률)</div>
+                  <div id="res-score" class="text-2xl font-extrabold text-indigo-600">0.0%</div>
+                </div>
+              </div>
+
+              <!-- Summary Card -->
+              <p id="res-summary" class="text-sm text-slate-600 leading-relaxed mb-5 bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                질문 문장을 입력하시면 AI가 화성시 소상공인 지원 정책 중 가장 적합한 혜택을 매칭해드립니다.
+              </p>
+
+              <!-- Policy Detail Grid -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+                <div class="bg-indigo-50/60 p-3.5 rounded-xl border border-indigo-100">
+                  <div class="text-xs text-indigo-700 font-bold mb-1 flex items-center gap-1">
+                    <i class="fa-solid fa-users"></i> 지원 대상 요건
+                  </div>
+                  <div id="res-target" class="text-xs text-slate-800 font-medium leading-normal"> 대기 중 </div>
+                </div>
+                <div class="bg-emerald-50/60 p-3.5 rounded-xl border border-emerald-100">
+                  <div class="text-xs text-emerald-700 font-bold mb-1 flex items-center gap-1">
+                    <i class="fa-solid fa-gift"></i> 주요 혜택 내용
+                  </div>
+                  <div id="res-benefit" class="text-xs text-slate-800 font-medium leading-normal"> 대기 중 </div>
+                </div>
+              </div>
+
+              <!-- QUICK ELIGIBILITY CHECKER (INTEGRATED) -->
+              <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 mb-6">
+                <div class="flex items-center justify-between mb-3">
+                  <h3 class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                    <i class="fa-solid fa-calculator text-indigo-600"></i>
+                    내 사업장 자격 조건 즉시 진단
+                  </h3>
+                  <span class="text-[11px] text-slate-500">업력 & 매출 기반 자동 판별</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                  <div>
+                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">사업자 업력 (운영 기간)</label>
+                    <div class="relative">
+                      <input type="number" id="quick-months" value="12" min="0" placeholder="12" 
+                        class="w-full bg-white text-xs border border-slate-300 rounded-lg p-2.5 pr-10 focus:ring-2 focus:ring-indigo-200 outline-none">
+                      <span class="absolute right-3 top-2.5 text-xs text-slate-400">개월</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">전년도 연 매출액</label>
+                    <div class="relative">
+                      <input type="number" id="quick-sales" value="15000" min="0" step="100" placeholder="15000" 
+                        class="w-full bg-white text-xs border border-slate-300 rounded-lg p-2.5 pr-12 focus:ring-2 focus:ring-indigo-200 outline-none">
+                      <span class="absolute right-3 top-2.5 text-xs text-slate-400">만원</span>
+                    </div>
+                  </div>
+                </div>
+
+                <button onclick="runQuickEligibilityCheck()" class="w-full bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold py-2 rounded-lg transition flex items-center justify-center gap-1">
+                  <i class="fa-solid fa-magnifying-glass"></i> 이 정책에 내 사업장이 해당되는지 확인하기
+                </button>
+
+                <!-- Eligibility Assessment Alert Result -->
+                <div id="eligibility-result-box" class="mt-3 hidden p-3 rounded-xl text-xs leading-relaxed border">
+                  <!-- Dynamic JS Output -->
+                </div>
+              </div>
+
+              <!-- Contact & Department Info -->
+              <div class="bg-slate-900 text-white p-4 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div class="flex items-center space-x-3">
+                  <div class="w-9 h-9 rounded-lg bg-indigo-600 flex items-center justify-center text-white flex-shrink-0">
+                    <i class="fa-solid fa-headset text-sm"></i>
+                  </div>
+                  <div>
+                    <div id="res-dept" class="text-xs font-semibold text-slate-300">화성시청 지역경제과 소상공인지원팀</div>
+                    <div id="res-phone" class="text-sm font-bold text-indigo-300">☎ 031-5189-7329</div>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                  <a id="res-call-btn" href="tel:03151897329" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3.5 py-2 rounded-lg font-semibold transition flex items-center gap-1">
+                    <i class="fa-solid fa-phone"></i> 전화 문의
+                  </a>
+                  <button onclick="openChecklistModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3.5 py-2 rounded-lg font-medium transition border border-slate-700 flex items-center gap-1">
+                    <i class="fa-solid fa-file-lines"></i> 서류 안내
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- KEYWORD MATCHING ANALYSIS -->
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6">
+            <h3 class="text-sm font-bold text-slate-900 mb-1 flex items-center gap-2">
+              <i class="fa-solid fa-tags text-indigo-600"></i>
+              질문 내 핵심 키워드 인식 결과
+            </h3>
+            <p class="text-xs text-slate-500 mb-4">입력하신 문장에서 AI가 정책 분류에 반영한 주요 연관 단어입니다.</p>
+
+            <div id="token-contributions" class="space-y-2">
+              <div class="text-xs text-slate-400 py-3 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                질문을 입력하시면 인식된 키워드 분석 결과가 여기에 표시됩니다.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: PROBABILITY BREAKDOWN & QUICK LINKS (5 cols) -->
+        <div class="lg:col-span-5 space-y-6">
+          
+          <!-- CLASS PROBABILITIES -->
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6">
+            <h3 class="text-sm font-bold text-slate-900 mb-1 flex items-center gap-2">
+              <i class="fa-solid fa-chart-pie text-indigo-600"></i>
+              지원 정책별 AI 적합도 분석
+            </h3>
+            <p class="text-xs text-slate-500 mb-4">화성시 4대 주요 지원 사업별 알고리즘 매칭 확률</p>
+
+            <div id="prob-bars-container" class="space-y-4">
+              <div class="text-xs text-slate-400 text-center py-4">분석 대기 중...</div>
+            </div>
+          </div>
+
+          <!-- DONGTAN-ON SERVICE BANNER -->
+          <div class="bg-gradient-to-br from-indigo-900 to-indigo-950 text-white rounded-2xl p-5 shadow-sm space-y-3">
+            <div class="flex items-center gap-2 text-indigo-300 text-xs font-semibold">
+              <i class="fa-solid fa-bullhorn"></i> 동탄온 원스톱 연계 서비스
+            </div>
+            <h4 class="text-base font-bold text-white">동탄 신도시 개업 점포이신가요?</h4>
+            <p class="text-xs text-indigo-200 leading-relaxed">
+              지원 정책 신청과 함께 동탄온 플랫폼에 매장 정보를 등록하시면, **'우리 동네 신규 오픈 매장 지도'** 상단 노출 및 오픈 기념 모바일 쿠폰 발행 혜택을 무료로 받으실 수 있습니다.
+            </p>
+            <div class="pt-2">
+              <button onclick="showToast('동탄온 매장 등록 서비스는 회원가입 후 즉시 이용 가능합니다.')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold py-2.5 rounded-xl shadow transition">
+                동탄온 매장 무료 등록 신청
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ================= TAB 2: ELIGIBILITY CALCULATOR ================= -->
+    <section id="sec-calculator" class="hidden space-y-6">
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+        <div class="max-w-3xl">
+          <h2 class="text-lg font-bold text-slate-900 mb-1 flex items-center gap-2">
+            <i class="fa-solid fa-calculator text-indigo-600"></i>
+            소상공인 지원 정책 자격 요건 자가 진단기
+          </h2>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            사업장의 **운영 기간(업력)**과 **전년도 매출액**을 입력하시면, 화성시에서 제공하는 소상공인 지원 사업별 수혜 가능 여부를 한눈에 진단해드립니다.
+          </p>
+        </div>
+
+        <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50 p-5 rounded-2xl border border-slate-200">
+          <div>
+            <label for="diag-months" class="block text-xs font-bold text-slate-800 mb-1.5">
+              1. 현재 사업자 업력 (운영 기간)
+            </label>
+            <div class="relative">
+              <input type="number" id="diag-months" value="8" min="0" placeholder="8"
+                class="w-full bg-white text-sm font-semibold border border-slate-300 rounded-xl p-3 pr-12 focus:ring-2 focus:ring-indigo-200 outline-none">
+              <span class="absolute right-3.5 top-3 text-xs text-slate-500 font-medium">개월</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1">사업자등록증 상 개업일 기준</p>
+          </div>
+
+          <div>
+            <label for="diag-sales" class="block text-xs font-bold text-slate-800 mb-1.5">
+              2. 전년도 연간 매출액
+            </label>
+            <div class="relative">
+              <input type="number" id="diag-sales" value="20000" min="0" step="500" placeholder="20000"
+                class="w-full bg-white text-sm font-semibold border border-slate-300 rounded-xl p-3 pr-14 focus:ring-2 focus:ring-indigo-200 outline-none">
+              <span class="absolute right-3.5 top-3 text-xs text-slate-500 font-medium">만원</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1">예: 2억원 = 20000 만원</p>
+          </div>
+
+          <div>
+            <label for="diag-type" class="block text-xs font-bold text-slate-800 mb-1.5">
+              3. 업종 구분
+            </label>
+            <select id="diag-type" class="w-full bg-white text-sm font-semibold border border-slate-300 rounded-xl p-3 focus:ring-2 focus:ring-indigo-200 outline-none">
+              <option value="general">일반 소상공인 (음식, 도소매, 서비스 등)</option>
+              <option value="manufacturing">도시형 소공인 (제조업, 기술공방)</option>
+            </select>
+            <p class="text-[11px] text-slate-400 mt-1">제조업 소공인 특화사업 판별용</p>
+          </div>
+        </div>
+
+        <div class="mt-4 flex justify-end">
+          <button onclick="runFullDiagnostic()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm px-6 py-3 rounded-xl shadow-md transition flex items-center gap-2">
+            <i class="fa-solid fa-list-check"></i> 전체 정책 지원 자격 진단 실행
+          </button>
+        </div>
+      </div>
+
+      <!-- DIAGNOSTIC RESULTS GRID -->
+      <div id="diag-results-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Dynamic Cards Inserted by JS -->
+      </div>
+    </section>
+
+
+    <!-- ================= TAB 3: POLICY CATALOG ================= -->
+    <section id="sec-policies" class="hidden space-y-6">
+      <div class="bg-indigo-900 text-white rounded-2xl p-6 shadow-md flex flex-col md:flex-row items-center justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-bold">화성시 소상공인 지원 정책 종합 안내</h2>
+          <p class="text-xs text-indigo-200 mt-1">화성특례시에서 운영 중인 소상공인 경영 안정 및 성장 지원 사업 내역입니다.</p>
+        </div>
+        <button onclick="openChecklistModal()" class="bg-white text-indigo-900 hover:bg-indigo-50 font-bold text-xs px-4 py-2.5 rounded-xl shadow transition whitespace-nowrap">
+          <i class="fa-solid fa-file-pdf"></i> 필수 제출 서류 목록 보기
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- CARD 1 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="bg-indigo-100 text-indigo-800 text-xs font-bold px-2.5 py-1 rounded-md">정책 01</span>
+              <span class="text-xs font-semibold text-slate-500">담당: 소상공인지원팀</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">경영환경 개선 비용 지원</h3>
+            <ul class="text-xs text-slate-600 space-y-2 mb-4">
+              <li class="flex items-start gap-1.5"><i class="fa-solid fa-check text-indigo-500 mt-0.5"></i> <strong>지원대상:</strong> 관내 창업 6개월 이상, 전년도 매출액 3억원 이하 소상공인</li>
+              <li class="flex items-start gap-1.5"><i class="fa-solid fa-check text-indigo-500 mt-0.5"></i> <strong>지원내용:</strong> 최대 300만원 경영환경개선 비용(점포 리모델링, 간판, 시설) 및 맞춤형 컨설팅</li>
+              <li class="flex items-start gap-1.5"><i class="fa-solid fa-phone text-indigo-500 mt-0.5"></i> <strong>문의전화:</strong> 031-5189-7329</li>
+            </ul>
+          </div>
+          <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+            <div class="flex flex-wrap gap-1">
+              <span class="bg-slate-100 text-slate-600 text-[11px] px-2 py-0.5 rounded">#인테리어</span>
+              <span class="bg-slate-100 text-slate-600 text-[11px] px-2 py-0.5 rounded">#간판교체</span>
+            </div>
+            <a href="tel:03151897329" class="text-xs text-indigo-600 font-bold hover:underline">전화 문의 →</a>
+          </div>
+        </div>
+
+        <!-- CARD 2 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-1 rounded-md">정책 02</span>
+              <span class="text-xs font-semibold text-slate-500">담당: 소상공인지원팀 / 경기신보</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">소상공인 특례보증 & 이차보전</h3>
+            <ul class="text-xs text-slate-600 space-y-2 mb-4">
+              <li class="flex items-start gap-1.5"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i> <strong>지원대상:</strong> 담보력 부족으로 자금난을 겪는 화성시 관내 소상공인</li>
+              <li class="flex items-start gap-1.5"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i> <strong>지원내용:</strong> 업체당 최대 5,000만원 보증 + 대출 실행 시 이자차액 2% 지원 (5년 이내)</li>
+              <li class="flex items-start gap-1.5"><i class="fa-solid fa-phone text-emerald-500 mt-0.5"></i> <strong>문의전화:</strong> 031-5189-7220</li>
+            </ul>
+          </div>
+          <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+            <div class="flex flex-wrap gap-1">
+              <span class="bg-slate-100 text-slate-600 text-[11px] px-2 py-0.5 rounded">#대출보증</span>
+              <span class="bg-slate-100 text-slate-600 text-[11px] px-2 py-0.5 rounded">#이자2%지원</span>
+            </div>
+            <a href="tel:03151897220" class="text-xs text-emerald-600 font-bold hover:underline">전화 문의 →</a>
+          </div>
+        </div>
+
+        <!-- CARD 3 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="bg-sky-100 text-sky-800 text-xs font-bold px-2.5 py-1 rounded-md">정책 03</span>
+              <span class="text-xs font-semibold text-slate-500">담당: 소상공인지원팀</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">미소금융 대출이자 지원</h3>
+            <ul class="text-xs text-slate-600 space-y-2 mb-4">
+              <li class="flex items-start gap-1.5"><i class="fa-solid fa-check text-sky-500 mt-0.5"></i> <strong>지원대상:</strong> 미소금융 경기화성법인 대출을 실행한 소상공인</li>
+              <li class="flex items-start gap-1.5"><i class="fa-solid fa-check text-sky-500 mt-0.5"></i> <strong>지원내용:</strong> 대출 이자 3.5% 감면 지원</li>
+              <li class="flex items-start gap-1.5"><i class="fa-solid fa-phone text-sky-500 mt-0.5"></i> <strong>문의전화:</strong> 031-5189-7329</li>
+            </ul>
+          </div>
+          <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+            <div class="flex flex-wrap gap-1">
+              <span class="bg-slate-100 text-slate-600 text-[11px] px-2 py-0.5 rounded">#미소금융</span>
+              <span class="bg-slate-100 text-slate-600 text-[11px] px-2 py-0.5 rounded">#이자3.5%감면</span>
+            </div>
+            <a href="tel:03151897329" class="text-xs text-sky-600 font-bold hover:underline">전화 문의 →</a>
+          </div>
+        </div>
+
+        <!-- CARD 4 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="bg-purple-100 text-purple-800 text-xs font-bold px-2.5 py-1 rounded-md">정책 04</span>
+              <span class="text-xs font-semibold text-slate-500">담당: 소공인특화지원센터</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">소공인 특화지원센터</h3>
+            <ul class="text-xs text-slate-600 space-y-2 mb-4">
+              <li class="flex items-start gap-1.5"><i class="fa-solid fa-check text-purple-500 mt-0.5"></i> <strong>지원대상:</strong> 화성시 관내 도시형 소공인 (제조업 및 기술 기반 공방)</li>
+              <li class="flex items-start gap-1.5"><i class="fa-solid fa-check text-purple-500 mt-0.5"></i> <strong>지원내용:</strong> 교육, 마케팅 홍보, 컨설팅, 시제품 개발, 인증 획득, 디지털 전환 지원</li>
+              <li class="flex items-start gap-1.5"><i class="fa-solid fa-phone text-purple-500 mt-0.5"></i> <strong>문의전화:</strong> 031-5189-7329</li>
+            </ul>
+          </div>
+          <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+            <div class="flex flex-wrap gap-1">
+              <span class="bg-slate-100 text-slate-600 text-[11px] px-2 py-0.5 rounded">#제조업</span>
+              <span class="bg-slate-100 text-slate-600 text-[11px] px-2 py-0.5 rounded">#시제품제작</span>
+            </div>
+            <a href="tel:03151897329" class="text-xs text-purple-600 font-bold hover:underline">전화 문의 →</a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-900 text-slate-400 text-xs py-6 border-t border-slate-800 mt-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div>
+        <p class="font-semibold text-slate-300">동탄온 (Dongtan-On) - 화성시 소상공인 개업·홍보 맞춤형 원스톱 플랫폼</p>
+        <p class="text-slate-500 text-[11px] mt-0.5">화성시청 지역경제과 소상공인지원팀 연계 가이드 서비스</p>
+      </div>
+      <div class="text-slate-500 text-[11px]">
+        Inference: On-Device JS Engine (TF-IDF + Logistic Regression)
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- CHECKLIST MODAL -->
+  <div id="checklist-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-100 max-h-[90vh] overflow-y-auto custom-scrollbar">
+      <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-clipboard-check text-indigo-600"></i>
+          소상공인 지원 신청 필수 제출 서류 체크리스트
+        </h3>
+        <button onclick="closeChecklistModal()" class="text-slate-400 hover:text-slate-600 p-1">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div class="space-y-4 text-xs text-slate-700">
+        <p class="bg-indigo-50 text-indigo-900 p-3 rounded-xl border border-indigo-100 font-medium">
+          화성시청 소상공인지원팀 방문 또는 온라인 신청 시 준비해야 하는 기본 서류 목록입니다.
+        </p>
+
+        <div class="space-y-2">
+          <label class="flex items-start gap-2 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
+            <input type="checkbox" class="mt-0.5 text-indigo-600 rounded focus:ring-indigo-500" checked>
+            <div>
+              <div class="font-bold text-slate-900">1. 사업자등록증 사본 1부</div>
+              <div class="text-slate-500 text-[11px]">화성시 관내 사업장 소재지 검증용</div>
+            </div>
+          </label>
+
+          <label class="flex items-start gap-2 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
+            <input type="checkbox" class="mt-0.5 text-indigo-600 rounded focus:ring-indigo-500" checked>
+            <div>
+              <div class="font-bold text-slate-900">2. 매출액 증빙 서류 (전년도/최근 1년)</div>
+              <div class="text-slate-500 text-[11px]">부가가치세 과세표준증명원 또는 면세사업자수입금액증명원</div>
+            </div>
+          </label>
+
+          <label class="flex items-start gap-2 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
+            <input type="checkbox" class="mt-0.5 text-indigo-600 rounded focus:ring-indigo-500">
+            <div>
+              <div class="font-bold text-slate-900">3. 임대차계약서 사본 (임차점포인 경우)</div>
+              <div class="text-slate-500 text-[11px]">경영환경개선 지원 시 점포 임대차 확인용</div>
+            </div>
+          </label>
+
+          <label class="flex items-start gap-2 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
+            <input type="checkbox" class="mt-0.5 text-indigo-600 rounded focus:ring-indigo-500">
+            <div>
+              <div class="font-bold text-slate-900">4. 견적서 및 개선 전 현장 사진 (환경개선 신청 시)</div>
+              <div class="text-slate-500 text-[11px]">리모델링/간판 시공업체 공식 견적서</div>
+            </div>
+          </label>
+        </div>
+
+        <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
+          <button onclick="closeChecklistModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-semibold transition">
+            닫기
+          </button>
+          <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1">
+            <i class="fa-solid fa-print"></i> 체크리스트 인쇄
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ================= JAVASCRIPT INFERENCE & ELIGIBILITY ENGINE ================= -->
+  <script>
+    /* =========================================================================
+       1. MODEL WEIGHTS DATA STRUCTURE (ON-DEVICE)
+       ========================================================================= */
+    const MODEL_WEIGHTS = {
+      "classes": ["경영환경개선", "특례보증", "미소금융", "소공인특화지원"],
+      
+      "vocabulary": {
+        "창업": 0, "인테리어": 1, "리모델링": 2, "간판": 3, "개선": 4, 
+        "환경": 5, "시설": 6, "컨설팅": 7, "매출": 8, "지원": 9,
+        "담보": 10, "대출": 11, "보증": 12, "특례보증": 13, "금리": 14, 
+        "이자": 15, "2%": 16, "자금": 17, "신용": 18, "이차보전": 19,
+        "미소": 20, "미소금융": 21, "3.5%": 22, "저신용": 23, "감면": 24,
+        "소공인": 25, "시제품": 26, "마케팅": 27, "홍보": 28, "제조업": 29, 
+        "인증": 30, "공방": 31, "디지털": 32, "환경개선": 33, "교체": 34, "300만원": 35
+      },
+
+      "idf_weights": [
+        1.45, 2.10, 2.05, 2.15, 1.30, 
+        1.40, 1.80, 1.70, 1.50, 1.10,
+        2.20, 1.25, 2.00, 2.30, 1.75, 
+        1.20, 2.10, 1.60, 1.90, 2.40,
+        2.50, 2.60, 2.50, 2.30, 1.80,
+        2.10, 2.40, 1.90, 2.00, 2.20, 
+        2.30, 2.40, 2.20, 2.10, 1.90, 2.20
+      ],
+
+      "coefficients": [
+        [
+          1.8, 3.2, 3.0, 3.1, 2.5, 2.6, 2.1, 2.2, 1.1, 0.4,
+          -1.2, -0.8, -1.0, -1.5, -0.9, -1.1, -1.0, -0.5, -0.8, -1.2,
+          -1.5, -1.6, -1.4, -1.2, 0.2, -1.1, -1.2, -0.5, -0.4, -1.0, 
+          -0.8, -0.7, -0.6, 2.8, 2.1, 2.5
+        ],
+        [
+          -0.8, -1.2, -1.0, -1.1, -0.9, -0.8, -0.7, -0.9, -0.2, 0.5,
+          3.5, 2.2, 3.4, 3.6, 2.1, 2.3, 3.0, 2.2, 1.8, 3.2,
+          -1.2, -1.3, -1.1, -0.8, 0.8, -1.0, -1.1, -0.8, -0.9, -1.2, 
+          -0.9, -1.0, -0.7, -1.0, -0.8, -0.9
+        ],
+        [
+          -0.9, -1.1, -0.9, -1.0, -0.8, -0.7, -0.8, -0.6, -0.5, 0.3,
+          -0.5, 1.5, -0.4, -0.8, 1.2, 2.8, -0.5, 0.2, 2.5, -0.8,
+          4.2, 4.5, 4.1, 3.2, 2.1, -0.8, -0.9, -0.7, -0.8, -0.9, 
+          -0.7, -0.8, -0.6, -0.8, -0.6, -0.7
+        ],
+        [
+          -0.7, -0.9, -0.8, -0.8, -0.6, -0.5, -0.4, 1.1, -0.2, 0.6,
+          -1.1, -1.0, -0.9, -1.0, -0.8, -1.2, -0.9, -0.8, -0.9, -0.9,
+          -1.1, -1.2, -1.0, -0.9, 0.1, 3.8, 4.1, 3.2, 3.1, 3.5, 
+          2.9, 3.0, 2.8, -0.7, -0.5, -0.6
+        ]
+      ],
+
+      "intercept": [-0.15, 0.10, -0.25, -0.05]
+    };
+
+    /* POLICY METADATA DATABASE */
+    const POLICY_DATA = {
+      "경영환경개선": {
+        title: "경영환경 개선 비용 지원",
+        summary: "동탄 내 소상공인의 점포 리모델링, 간판 교체 및 맞춤형 컨설팅 비용을 지원합니다.",
+        target: "관내 창업 6개월 이상, 전년도 매출액 3억원 이하 소상공인",
+        benefit: "최대 300만원 (점포 환경개선 및 맞춤형 컨설팅)",
+        dept: "화성시청 지역경제과 소상공인지원팀",
+        phone: "031-5189-7329",
+        color: "indigo",
+        // Eligibility rule function
+        checkEligibility: (months, sales, type) => {
+          const reqMonths = months >= 6;
+          const reqSales = sales <= 30000; // 3억원 = 30000만원
+          if (reqMonths && reqSales) {
+            return { qualified: true, msg: "✅ **지원 자격 충족**: 업력 6개월 이상 및 전년 매출 3억원 이하 조건을 모두 만족합니다!" };
+          } else {
+            let reasons = [];
+            if (!reqMonths) reasons.push(`업력 부족 (현재 ${months}개월 / 최소 6개월 이상 필요)`);
+            if (!reqSales) reasons.push(`매출액 초과 (현재 ${(sales/10000).toFixed(1)}억원 / 최대 3억원 이하)`);
+            return { qualified: false, msg: `❌ **조건 미달**: ${reasons.join(", ")}` };
+          }
+        }
+      },
+      "특례보증": {
+        title: "소상공인 특례보증 & 대출이자 2% 지원",
+        summary: "담보력이 부족한 소상공인에게 대출 보증 및 5년 이내 대출 이자차액 2%를 감면 지원합니다.",
+        target: "담보력 부족으로 자금난을 겪는 화성시 관내 소상공인",
+        benefit: "업체당 최대 5,000만원 보증 + 이자 2% 지원 (5년)",
+        dept: "소상공인지원팀 / 경기신용보증재단",
+        phone: "031-5189-7220",
+        color: "emerald",
+        checkEligibility: (months, sales, type) => {
+          return { qualified: true, msg: "✅ **지원 자격 대상**: 창업 직후 소상공인도 보증 심사를 거쳐 최대 5,000만원 보증 및 이자 2% 지원 신청이 가능합니다." };
+        }
+      },
+      "미소금융": {
+        title: "미소금융 대출이자 3.5% 지원",
+        summary: "미소금융 경기화성법인을 통해 대출을 실행한 소상공인의 이자 부담을 줄여드립니다.",
+        target: "미소금융 경기화성법인 대출 이행 소상공인",
+        benefit: "대출 이자 3.5% 감면 지원",
+        dept: "화성시청 지역경제과 소상공인지원팀",
+        phone: "031-5189-7329",
+        color: "sky",
+        checkEligibility: (months, sales, type) => {
+          return { qualified: true, msg: "✅ **지원 자격 대상**: 미소금융 경기화성법인 대출을 이용 중이거나 신규 대출을 승인받은 경우 이자 3.5% 감면 대상입니다." };
+        }
+      },
+      "소공인특화지원": {
+        title: "소공인 특화지원 센터 (제조/공방)",
+        summary: "도시형 소공인 및 제조업체를 대상으로 교육, 시제품 제작, 마케팅, 인증 획득을 지원합니다.",
+        target: "화성시 관내 도시형 소공인 (제조업, 기술공방)",
+        benefit: "시제품 제작, 마케팅, 안전사업장 및 디지털 전환",
+        dept: "화성시 소공인특화지원센터",
+        phone: "031-5189-7329",
+        color: "purple",
+        checkEligibility: (months, sales, type) => {
+          if (type === "manufacturing") {
+            return { qualified: true, msg: "✅ **지원 자격 충족**: 도시형 소공인(제조업)으로 지정 시 시제품 제작 및 마케팅 지원 대상입니다." };
+          } else {
+            return { qualified: false, msg: "⚠️ **확인 필요**: 본 사업은 제조업/도시형 소공인 특화 사업입니다. 서비스/도소매업은 소상공인 일반 지원 사업을 권장합니다." };
+          }
+        }
+      }
+    };
+
+    let currentPredictedPolicy = "경영환경개선";
+
+    /* =========================================================================
+       2. JS TF-IDF & LOGISTIC REGRESSION PREDICTION LOGIC
+       ========================================================================= */
+
+    function tokenizeText(text) {
+      const matchedTokens = [];
+      const wordCounts = {};
+
+      for (const vocabKey in MODEL_WEIGHTS.vocabulary) {
+        if (text.includes(vocabKey)) {
+          const regex = new RegExp(vocabKey, 'g');
+          const matches = text.match(regex);
+          const count = matches ? matches.length : 1;
+          
+          wordCounts[vocabKey] = count;
+          matchedTokens.push(vocabKey);
+        }
+      }
+
+      return { matchedTokens, wordCounts };
+    }
+
+    function predictPolicy(text) {
+      const { matchedTokens, wordCounts } = tokenizeText(text);
+      const vocab = MODEL_WEIGHTS.vocabulary;
+      const idf = MODEL_WEIGHTS.idf_weights;
+      const coef = MODEL_WEIGHTS.coefficients;
+      const intercept = MODEL_WEIGHTS.intercept;
+      const classes = MODEL_WEIGHTS.classes;
+
+      const numClasses = classes.length;
+      const logits = [...intercept];
+      const featureContributions = {};
+
+      matchedTokens.forEach(token => {
+        const featureIdx = vocab[token];
+        if (featureIdx !== undefined) {
+          const tf = wordCounts[token] || 1;
+          const tfidf = tf * idf[featureIdx];
+
+          featureContributions[token] = [];
+
+          for (let k = 0; k < numClasses; k++) {
+            const weight = coef[k][featureIdx];
+            const contrib = tfidf * weight;
+            logits[k] += contrib;
+            featureContributions[token].push(contrib);
+          }
+        }
+      });
+
+      const maxLogit = Math.max(...logits);
+      const expLogits = logits.map(z => Math.exp(z - maxLogit));
+      const sumExp = expLogits.reduce((a, b) => a + b, 0);
+      const probabilities = expLogits.map(exp => exp / sumExp);
+
+      let maxProbIdx = 0;
+      for (let i = 1; i < numClasses; i++) {
+        if (probabilities[i] > probabilities[maxProbIdx]) {
+          maxProbIdx = i;
+        }
+      }
+
+      return {
+        topClass: classes[maxProbIdx],
+        topProb: probabilities[maxProbIdx],
+        allClasses: classes,
+        probabilities: probabilities,
+        matchedTokens: matchedTokens,
+        featureContributions: featureContributions
+      };
+    }
+
+    /* =========================================================================
+       3. UI CONTROLLERS & RENDERERS
+       ========================================================================= */
+
+    function setQuery(text) {
+      document.getElementById('user-query').value = text;
+      runPrediction();
+    }
+
+    function clearInput() {
+      document.getElementById('user-query').value = '';
+      document.getElementById('user-query').focus();
+    }
+
+    function runPrediction() {
+      const query = document.getElementById('user-query').value.trim();
+      if (!query) {
+        showToast('질문 내용을 입력하시거나 샘플 질문 버튼을 클릭해주세요.', 'amber');
+        return;
+      }
+
+      const res = predictPolicy(query);
+      currentPredictedPolicy = res.topClass;
+      renderResults(res);
+      runQuickEligibilityCheck();
+    }
+
+    function renderResults(res) {
+      const policyMeta = POLICY_DATA[res.topClass] || POLICY_DATA["경영환경개선"];
+
+      document.getElementById('res-title').innerText = policyMeta.title;
+      document.getElementById('res-score').innerText = (res.topProb * 100).toFixed(1) + '%';
+      document.getElementById('res-summary').innerText = policyMeta.summary;
+      document.getElementById('res-target').innerText = policyMeta.target;
+      document.getElementById('res-benefit').innerText = policyMeta.benefit;
+      document.getElementById('res-dept').innerText = policyMeta.dept;
+      document.getElementById('res-phone').innerText = '☎ ' + policyMeta.phone;
+      document.getElementById('res-call-btn').href = 'tel:' + policyMeta.phone.replace(/[^0-9]/g, '');
+
+      const colorMap = {
+        'indigo': 'bg-indigo-600',
+        'emerald': 'bg-emerald-600',
+        'sky': 'bg-sky-500',
+        'purple': 'bg-purple-600'
+      };
+      document.getElementById('result-top-bar').className = `h-2 ${colorMap[policyMeta.color] || 'bg-indigo-600'}`;
+
+      // Probability Progress Bars
+      const probContainer = document.getElementById('prob-bars-container');
+      probContainer.innerHTML = '';
+
+      res.allClasses.forEach((clsName, idx) => {
+        const probPct = (res.probabilities[idx] * 100).toFixed(1);
+        const isTop = clsName === res.topClass;
+
+        const barHtml = `
+          <div>
+            <div class="flex justify-between text-xs font-semibold mb-1">
+              <span class="${isTop ? 'text-indigo-600 font-bold flex items-center gap-1' : 'text-slate-700'}">
+                ${isTop ? '<i class="fa-solid fa-circle-check"></i>' : ''} ${clsName}
+              </span>
+              <span class="${isTop ? 'text-indigo-600 font-bold' : 'text-slate-500'}">${probPct}%</span>
+            </div>
+            <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+              <div class="h-full ${isTop ? 'bg-indigo-600' : 'bg-slate-300'} transition-all duration-500 rounded-full" style="width: ${probPct}%"></div>
+            </div>
+          </div>
+        `;
+        probContainer.innerHTML += barHtml;
+      });
+
+      // Token Match Analysis
+      const tokenContainer = document.getElementById('token-contributions');
+      tokenContainer.innerHTML = '';
+
+      if (res.matchedTokens.length === 0) {
+        tokenContainer.innerHTML = `
+          <div class="text-xs text-slate-500 bg-slate-50 p-3 rounded-xl border border-slate-200">
+            문장 내 특수 핵심어 없이 일반 문맥으로 분석되었습니다. (인테리어, 대출, 보증, 미소금융, 시제품 등의 단어가 포함되면 정확도가 더 올라갑니다.)
+          </div>
+        `;
+      } else {
+        const topClassIdx = res.allClasses.indexOf(res.topClass);
+
+        res.matchedTokens.forEach(token => {
+          const contrib = res.featureContributions[token][topClassIdx];
+          const isPositive = contrib > 0;
+
+          const chip = `
+            <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs">
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-slate-800 bg-white px-2 py-0.5 rounded border border-slate-200">"${token}"</span>
+                <span class="text-[11px] text-slate-500">인식된 핵심 단어</span>
+              </div>
+              <div class="font-bold text-indigo-600">
+                인식 완료
+              </div>
+            </div>
+          `;
+          tokenContainer.innerHTML += chip;
+        });
+      }
+    }
+
+    /* QUICK INTEGRATED ELIGIBILITY CHECK */
+    function runQuickEligibilityCheck() {
+      const months = parseInt(document.getElementById('quick-months').value) || 0;
+      const sales = parseInt(document.getElementById('quick-sales').value) || 0;
+      const policyObj = POLICY_DATA[currentPredictedPolicy];
+
+      if (!policyObj) return;
+
+      const result = policyObj.checkEligibility(months, sales, "general");
+      const box = document.getElementById('eligibility-result-box');
+      box.classList.remove('hidden');
+
+      if (result.qualified) {
+        box.className = "mt-3 p-3 rounded-xl text-xs leading-relaxed bg-emerald-50 text-emerald-900 border border-emerald-200";
+      } else {
+        box.className = "mt-3 p-3 rounded-xl text-xs leading-relaxed bg-amber-50 text-amber-900 border border-amber-200";
+      }
+      box.innerHTML = result.msg;
+    }
+
+    /* FULL DIAGNOSTIC TAB FUNCTION */
+    function runFullDiagnostic() {
+      const months = parseInt(document.getElementById('diag-months').value) || 0;
+      const sales = parseInt(document.getElementById('diag-sales').value) || 0;
+      const type = document.getElementById('diag-type').value;
+
+      const grid = document.getElementById('diag-results-grid');
+      grid.innerHTML = '';
+
+      for (const pKey in POLICY_DATA) {
+        const policy = POLICY_DATA[pKey];
+        const res = policy.checkEligibility(months, sales, type);
+
+        const card = `
+          <div class="bg-white rounded-2xl p-5 border ${res.qualified ? 'border-emerald-200 bg-emerald-50/20' : 'border-slate-200'} shadow-sm">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="font-bold text-slate-900 text-sm">${policy.title}</h3>
+              <span class="text-xs px-2.5 py-1 rounded-full font-bold ${res.qualified ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'}">
+                ${res.qualified ? '✅ 지원 가능' : '⚠️ 확인 필요'}
+              </span>
+            </div>
+            <p class="text-xs text-slate-600 mb-3">${policy.summary}</p>
+            <div class="p-3 rounded-xl text-xs ${res.qualified ? 'bg-emerald-50 text-emerald-900 border border-emerald-100' : 'bg-slate-100 text-slate-700'}">
+              ${res.msg}
+            </div>
+            <div class="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+              <span class="text-slate-500 font-medium">문의: ${policy.phone}</span>
+              <a href="tel:${policy.phone.replace(/[^0-9]/g, '')}" class="text-indigo-600 font-bold hover:underline">상담하기 →</a>
+            </div>
+          </div>
+        `;
+        grid.innerHTML += card;
+      }
+    }
+
+    /* TAB SWITCHING */
+    function switchTab(tabName) {
+      ['classifier', 'calculator', 'policies'].forEach(sec => {
+        document.getElementById(`sec-${sec}`).classList.add('hidden');
+        const btn = document.getElementById(`tab-${sec}`);
+        if (btn) {
+          btn.classList.remove('active', 'border-indigo-400', 'text-white');
+          btn.classList.add('border-transparent', 'text-indigo-300');
+        }
+      });
+
+      document.getElementById(`sec-${tabName}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`tab-${tabName}`);
+      if (activeBtn) {
+        activeBtn.classList.add('active', 'border-indigo-400', 'text-white');
+        activeBtn.classList.remove('border-transparent', 'text-indigo-300');
+      }
+
+      if (tabName === 'calculator') {
+        runFullDiagnostic();
+      }
+    }
+
+    /* MODALS & TOASTS */
+    function openChecklistModal() {
+      document.getElementById('checklist-modal').classList.remove('hidden');
+    }
+
+    function closeChecklistModal() {
+      document.getElementById('checklist-modal').classList.add('hidden');
+    }
+
+    function showToast(msg, type = 'info') {
+      const toast = document.getElementById('toast-msg');
+      document.getElementById('toast-text').innerText = msg;
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3000);
+    }
+
+    /* INITIAL ONLOAD */
+    window.onload = function() {
+      setQuery('창업 1년차인데 매장 인테리어 및 간판 교체 비용 최대 300만원 지원받고 싶어요.');
+    };
+  </script>
+</body>
+</html>
